@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
                                         PermissionsMixin
 
+from django.utils.translation import gettext_lazy as _
+
 
 class UserManager(BaseUserManager):
 
@@ -35,3 +37,31 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
+
+
+class Stock(models.Model):
+    """Stock to be used for a order"""
+    name = models.CharField(max_length=255, unique=True)
+    isin = models.CharField(max_length=12, unique=True)
+    symbol = models.CharField(max_length=4, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Order(models.Model):
+    """Order object"""
+    # user = models.ForeignKey(
+    #     settings.AUTH_USER_MODEL,
+    #     on_delete=models.CASCADE
+    # )
+    #
+    class SideChoices(models.TextChoices):
+        buy = 'buy', _('Buy')
+        sell = 'sell', _('Sell')
+
+    isin = models.CharField(max_length=12)
+    limit_price = models.FloatField()
+    side = models.CharField(max_length=4, choices=SideChoices.choices)
+    valid_until = models.IntegerField()
+    quantity = models.IntegerField()

@@ -1,6 +1,8 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
+from core import models
+
 
 def sample_user(email='test@lemon.markets', password='testpass'):
     """Create a sample user"""
@@ -42,3 +44,13 @@ class ModelTests(TestCase):
 
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
+
+    def test_stock_str(self):
+        """Test the stock string representation"""
+        stock = models.Stock.objects.create(
+            name="Deutsche Wohnen SE",
+            isin="DE000A0HN5C6",
+            symbol="DWNI"
+        )
+
+        self.assertEqual(str(stock), stock.name)
